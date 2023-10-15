@@ -187,6 +187,9 @@ function est(){
         # En internet hay mucha informacion disponible de variables reservadas de AWK, la variable NR podría ser útil para este ejercicio.
         # Para identificar la columna escribimos $1, $2, $3...
         # Col: 9 latitude, Col: 10 longitude        
+
+        # TO-DO: Importante, AWK intepreta las columnas como string, fuerzo la conversión a entero con el +0. Aún así, el resultado no coincide...
+
         awk \
         'BEGIN { FS=","; RS="\n"; nord=0; sud=0; oriental=0; occidental=0; no_ubic=0; no_wid=0; count=0; }  
         NR>1 {

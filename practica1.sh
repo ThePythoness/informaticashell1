@@ -188,16 +188,22 @@ function est(){
         # Para identificar la columna escribimos $1, $2, $3...
         # Col: 9 latitude, Col: 10 longitude        
 
-        # TO-DO: Importante, AWK intepreta las columnas como string, fuerzo la conversión a entero con el +0. Aún así, el resultado no coincide...
+        # Importante, AWK intepreta las columnas como string, fuerzo la conversión a entero con el +0.
+        # Al menos en MAC es necesario definir el locale, para que use el punto como separador decimal. Añadiendo LC_ALL el problema se resuelve.
 
-        awk \
-        'BEGIN { FS=","; RS="\n"; nord=0; sud=0; oriental=0; occidental=0; no_ubic=0; no_wid=0; count=0; }  
+        LC_ALL=C awk \
+        'BEGIN { FS=","; RS="\n"; nord=0; sud=0; oriental=0; occidental=0; no_ubic=0; no_wid=0; }  
         NR>1 {
-                { if ($9+0 > 0) nord++; } 
-                { if ($9+0 < 0) sud++; }  
-                { if ($10+0 > 0) oriental++; }  
-                { if ($10+0 < 0) occidental++; }  
-                { if ($9+0 == 0 && $10+0 == 0) no_ubic++; } 
+                { if ($9+0 == 0 && $10+0 == 0) { 
+                        no_ubic++ ; 
+                }
+                else {
+                        { if ($9+0 < 0) sud++;
+                        else if ($9+0 > 0) nord++; }
+
+                        { if ($10+0 > 0) oriental++;   
+                        else if ($10+0 < 0) occidental++; }   
+                }} 
                 { if ($11"" == "") no_wid++; }
         }
         END {print "Nord", nord, "Sud", sud, "Est", oriental, "Oest", occidental, "No ubic", no_ubic, "No WDId", no_wid}'<cities_1.csv 
